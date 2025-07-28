@@ -146,3 +146,12 @@ class AtletaUpdateSchema(BaseModel):
     class Config:
         orm_mode = True
 
+class CoachOut(BaseModel):
+    id_entrenador: int
+    nombre_completo: str
+    fecha_nacimiento: Optional[date]
+    especialidad: Optional[str]
+    experiencia: Optional[str]
+
+    class Config:
+        orm_mode = True

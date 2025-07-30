@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from fastapi import Depends
 
 # Usa la URL directamente (sin .env)
-DATABASE_URL = "mysql+pymysql://root:root@localhost/aplicacion_deportiva"
+DATABASE_URL = "mysql+pymysql://root:@localhost/aplicacion_deportiva"
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)

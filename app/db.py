@@ -1,17 +1,16 @@
-import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import Session
+from fastapi import Depends
 
-# Usa la URL de Railway
-DATABASE_URL = os.getenv("MYSQL_URL")  # Railway define esta variable automáticamente
-
-if not DATABASE_URL:
-    raise ValueError("MYSQL_URL no está definida. Verifica tus variables de entorno en Railway.")
+# Usa la URL directamente (sin .env)
+DATABASE_URL = "mysql://root:qRpSTZzgOjdULHQYHkSQofFaeMZEsgWQ@interchange.proxy.rlwy.net:19565/railway"
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 Base = declarative_base()
 
+# 👉 Esta es la función que te faltaba
 def get_db():
     db = SessionLocal()
     try:

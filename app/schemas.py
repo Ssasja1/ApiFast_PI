@@ -1,6 +1,8 @@
 from pydantic import BaseModel, EmailStr, constr
 from datetime import date, datetime  
 from typing import Optional, Literal, List
+from enum import Enum
+
 
 class AtletaCreate(BaseModel):
     email: EmailStr
@@ -152,6 +154,35 @@ class CoachOut(BaseModel):
     fecha_nacimiento: Optional[date]
     especialidad: Optional[str]
     experiencia: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
+class NivelDificultad(str, Enum):
+    principiante = "principiante"
+    intermedio = "intermedio"
+    avanzado = "avanzado"
+
+class PostEntrenamiento(BaseModel):  # ✅ Este es solo para recibir datos
+    id_entrenador: int
+    titulo: str
+    descripcion: Optional[str] = None
+    duracion_estimada: int
+    nivel_dificultad: NivelDificultad
+
+    class Config:
+        orm_mode = True
+
+
+class EntrenamientoOut(BaseModel):
+    id_entrenamiento: int
+    id_entrenador: int  # ✅ NECESARIO
+    titulo: str
+    descripcion: Optional[str]
+    duracion_estimada: Optional[int]
+    nivel_dificultad: Optional[str]
+    fecha_creacion: Optional[datetime]
 
     class Config:
         orm_mode = True

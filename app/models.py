@@ -29,7 +29,8 @@ class PerfilAtleta(Base):
     frecuencia_cardiaca_minima = Column(Integer, nullable=True)
 
     entrenador = relationship("Entrenador", back_populates="atletas")
-    entrenamientos = relationship("Entrenamiento", back_populates="atleta")  # ← ya no es viewonly
+    # ❌ Eliminar esta relación porque ya no hay campo id_atleta en entrenamientos
+    # entrenamientos = relationship("Entrenamiento", back_populates="atleta")
 
 class Entrenador(Base):
     __tablename__ = "entrenadores"
@@ -38,22 +39,25 @@ class Entrenador(Base):
     nombre = Column(String(100))
 
     atletas = relationship("PerfilAtleta", back_populates="entrenador")
-    entrenamientos = relationship("Entrenamiento", back_populates="entrenador")  # ← opcional si quieres acceder a todos los entrenamientos
+    entrenamientos = relationship("Entrenamiento", back_populates="entrenador")
 
 class Entrenamiento(Base):
     __tablename__ = "entrenamientos"
 
     id_entrenamiento = Column(Integer, primary_key=True, index=True)
     id_entrenador = Column(Integer, ForeignKey("entrenadores.id_entrenador"), nullable=False)
-    id_atleta = Column(Integer, ForeignKey("perfiles_atletas.id_atleta"), nullable=False)  # ← nueva clave foránea
+    # ❌ Eliminar esta línea completamente:
+    # id_atleta = Column(Integer, ForeignKey("perfiles_atletas.id_atleta"), nullable=True)
+
     titulo = Column(String(100), nullable=False)
     descripcion = Column(Text)
     duracion_estimada = Column(Integer)
     fecha_creacion = Column(DateTime)
     nivel_dificultad = Column(Enum("principiante", "intermedio", "avanzado"))
 
-    entrenador = relationship("Entrenador", back_populates="entrenamientos")  # ← opcional
-    atleta = relationship("PerfilAtleta", back_populates="entrenamientos")    # ← nueva relación
+    entrenador = relationship("Entrenador", back_populates="entrenamientos")
+    # ❌ Eliminar esta relación también:
+    # atleta = relationship("PerfilAtleta", back_populates="entrenamientos")
 
 class PerfilEntrenador(Base):
     __tablename__ = 'perfiles_entrenadores'

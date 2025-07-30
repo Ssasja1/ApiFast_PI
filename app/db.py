@@ -4,13 +4,15 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 DATABASE_URL = os.getenv("MYSQL_URL")
 
-print("DEBUG MYSQL_URL:", DATABASE_URL)
+print("DEBUG: MYSQL_URL original:", DATABASE_URL)  # <--- Debug
 
 if not DATABASE_URL:
     raise ValueError("MYSQL_URL no está definida. Verifica tus variables de entorno en Railway.")
 
 if DATABASE_URL.startswith("mysql://"):
     DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+pymysql://", 1)
+
+print("DEBUG: MYSQL_URL final:", DATABASE_URL)  # <--- Debug final
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)

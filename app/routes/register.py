@@ -24,15 +24,15 @@ def registrar_usuario(data: schemas.RegistroUsuario, db: Session = Depends(get_d
     if data.tipo not in ("atleta", "entrenador"):
         raise HTTPException(status_code=400, detail="Tipo de usuario inválido")
 
-    # Crear usuario
+    ultimo_id = db.query(models.Usuario).order_by(models.Usuario.id_usuario.desc()).first()
+    nuevo_id = (ultimo_id.id_usuario + 1) if ultimo_id else 1
+
     usuario = models.Usuario(
+        id_usuario=nuevo_id,
         email=data.email,
         contrasena_hash=bcrypt.hash(data.contrasena),
         tipo=data.tipo
     )
-    db.add(usuario)
-    db.commit()
-    db.refresh(usuario)
 
     # Crear perfil según tipo
     if data.tipo == "atleta":

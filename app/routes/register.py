@@ -7,7 +7,6 @@ from datetime import date
 
 router = APIRouter(prefix="/registro", tags=["Registro"])
 
-
 def get_db():
     db = SessionLocal()
     try:
@@ -25,24 +24,21 @@ def registrar_usuario(data: schemas.RegistroUsuario, db: Session = Depends(get_d
     if data.tipo not in ("atleta", "entrenador"):
         raise HTTPException(status_code=400, detail="Tipo de usuario inválido")
 
-    # Crear usuario (la DB debería manejar el autoincremento de ID)
+    # Crear usuario
     usuario = models.Usuario(
         email=data.email,
         contrasena_hash=bcrypt.hash(data.contrasena),
         tipo=data.tipo
     )
-
     db.add(usuario)
     db.commit()
-    db.refresh(usuario)  # Ahora usuario tiene id_usuario generado
+    db.refresh(usuario)
 
     # Crear perfil según tipo
     if data.tipo == "atleta":
         crear_perfil_atleta(usuario.id_usuario, data, db)
     elif data.tipo == "entrenador":
         crear_perfil_entrenador(usuario.id_usuario, data, db)
-
-    db.commit()  # Confirmar creación de perfil
 
     return {"mensaje": "Registro exitoso", "id_usuario": usuario.id_usuario, "tipo": usuario.tipo}
 
@@ -63,6 +59,7 @@ def crear_perfil_atleta(user_id: int, data: schemas.RegistroUsuario, db: Session
         id_entrenador=data.id_entrenador if data.id_entrenador else None
     )
     db.add(perfil)
+    db.commit()
 
 
 def crear_perfil_entrenador(user_id: int, data: schemas.RegistroUsuario, db: Session):
@@ -74,3 +71,4 @@ def crear_perfil_entrenador(user_id: int, data: schemas.RegistroUsuario, db: Ses
         experiencia=data.experiencia
     )
     db.add(perfil)
+    db.commit()

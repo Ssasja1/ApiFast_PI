@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import atleta, entrenador, register  # 👈 Importa también register
-from app.routes import auth
-from app.routes import atletas_dashboard
-from app.routes import coach_dashboard
+from app.routes import atleta, entrenador, register, auth, atletas_dashboard, coach_dashboard
+from app.db import engine, Base  # 👈 Importar Base y engine
+from app import models  # 👈 Importar los modelos para registrarlos
 
-
+# Crear las tablas en la base de datos
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="API PI",
@@ -13,19 +13,19 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Configuración CORS para aceptar peticiones desde tu app móvil o localhost (ajusta la URL si usas producción)
+# Configuración CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Reemplaza "*" por tus orígenes reales en producción
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Permite GET, POST, PUT, DELETE, etc.
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # Incluir las rutas
 app.include_router(atleta.router)
 app.include_router(entrenador.router)
-app.include_router(register.router) 
+app.include_router(register.router)
 app.include_router(auth.router)
 app.include_router(atletas_dashboard.router)
 app.include_router(coach_dashboard.router)

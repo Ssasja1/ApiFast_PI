@@ -23,8 +23,8 @@ app.add_middleware(
 )
 
 # Incluir las rutas
-app.include_router(atleta.router)
-app.include_router(entrenador.router)
+# app.include_router(atleta.router)
+# app.include_router(entrenador.router)
 app.include_router(register.router)
 app.include_router(auth.router)
 app.include_router(atletas_dashboard.router)

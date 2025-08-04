@@ -7,6 +7,7 @@ from app.routes import coach_dashboard
 
 
 
+
 app = FastAPI(
     title="API PI",
     description="API creada para la aplicación móvil del PI",
@@ -16,7 +17,7 @@ app = FastAPI(
 # Configuración CORS para aceptar peticiones desde tu app móvil o localhost (ajusta la URL si usas producción)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Reemplaza "*" por tus orígenes reales en producción
+    allow_origins=[""],  # Reemplaza "" por tus orígenes reales en producción
     allow_credentials=True,
     allow_methods=["*"],  # Permite GET, POST, PUT, DELETE, etc.
     allow_headers=["*"],

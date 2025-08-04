@@ -3,6 +3,37 @@ from datetime import date, datetime
 from typing import Optional, Literal, List
 from enum import Enum
 
+class UsuarioBase(BaseModel):
+    id_usuario: int
+    email: EmailStr
+    tipo: str
+
+    class Config:
+        orm_mode = True
+        from_attributes = True
+
+class EstadoAsignacion(str, Enum):
+    pendiente = "pendiente"
+    en_progreso = "en_progreso"
+    completado = "completado"
+
+class AsignacionCreate(BaseModel):
+    id_entrenamiento: int
+    id_atleta: int
+
+class AsignacionResponse(BaseModel):
+    id_asignacion: int
+    id_entrenamiento: int
+    id_atleta: int
+    fecha_asignacion: Optional[date]
+    fecha_completado: Optional[date]
+    estado: EstadoAsignacion
+    feedback: Optional[str]
+    calificacion: Optional[int]
+
+    class Config:
+        orm_mode = True
+
 
 class AtletaCreate(BaseModel):
     email: EmailStr
@@ -15,9 +46,30 @@ class AtletaCreate(BaseModel):
     id_entrenador: Optional[int] = None  # Cambio clave (solución principal)
     frecuencia_cardiaca_minima: Optional[int] = None  # Cambio clave
 
+class EntrenamientoAsignadoResponse(BaseModel):
+    id_entrenamiento: int
+    titulo: str
+    descripcion: Optional[str]
+    duracion_estimada: Optional[int]
+    nivel_dificultad: Optional[str]
+
+    class Config:
+        from_attributes = True
+
+class AsignacionAtletaResponse(BaseModel):
+    id_asignacion: int
+    fecha_asignacion: Optional[date] = None
+    fecha_completado: Optional[date] = None
+    estado: EstadoAsignacion
+    feedback: Optional[str]
+    calificacion: Optional[int]
+    entrenamiento: Optional[EntrenamientoAsignadoResponse] = None  # Puede ser None si no hay entrenamiento asignado
+
+    class Config:
+        from_attributes = True
 class AtletaResponse(BaseModel):
     id_atleta: int  # 
-    id_usuario: int
+    usuario: UsuarioBase  # Relación con Usuario
     email: EmailStr
     tipo: str
     nombre_completo: str
@@ -28,6 +80,7 @@ class AtletaResponse(BaseModel):
     id_entrenador: Optional[int]  # Nuevo campo
     frecuencia_cardiaca_minima: Optional[int]  # Nuevo campo
     frecuencia_cardiaca_maxima: Optional[int]  # Nuevo campo
+    asignaciones: List[AsignacionAtletaResponse]
 
     class Config:
         from_attributes = True
@@ -40,6 +93,8 @@ class AtletaUpdate(BaseModel):
     deporte: Optional[str] = None
     id_entrenador: Optional[int] = None
     frecuencia_cardiaca_minima: Optional[int] = None
+
+
 
 
 class EntrenadorCreate(BaseModel):
@@ -67,6 +122,7 @@ class EntrenadorResponse(BaseModel):
     experiencia: Optional[str] = None        # Hacer opcional (solución clave)
     fecha_registro: datetime
     activo: bool
+    atletas_asignados: List[int] = []  # Lista de IDs de atletas asignados
     
     class Config:
         from_attributes = True
@@ -154,6 +210,7 @@ class CoachOut(BaseModel):
     fecha_nacimiento: Optional[date]
     especialidad: Optional[str]
     experiencia: Optional[str]
+    atletas_asignados: List[AtletaOut]  # Lista de diccionarios con datos de atletas asignados
 
     class Config:
         orm_mode = True
